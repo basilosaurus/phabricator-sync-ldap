@@ -46,7 +46,9 @@ assert($PHAB_PROTECTED_USERS !== null);
 $ldap_uri = getenv('LDAP_URI');
 assert($ldap_uri !== false);
 $ldap_binddn = getenv('LDAP_BINDDN');
-assert($ldap_binddn !== false);
+if ( !ANON_BIND ) {
+  assert($ldap_binddn !== false);
+}
 $ldap_bindpw = getenv('LDAP_BINDPW');
 assert($ldap_bindpw !== false);
 
@@ -56,8 +58,16 @@ if (DRY_RUN) {
 
 // LDAP
 
+$conn = NULL;
+
+if ( !ANON_BIND ) {
+  $conn = create_ldap_connection($ldap_uri, $ldap_binddn, $ldap_bindpw);
+} else {
+  $conn = create_ldap_connection($ldap_uri);
+}
+
 $ld = array(
-	"connection" => create_ldap_connection($ldap_uri, $ldap_binddn, $ldap_bindpw),
+	"connection" => $conn,
 	"base_dn" => LDAP_BASE,
 	"user" => array(
 		"search_base" => LDAP_BASE ? LDAP_USER_SUBTREE . ',' . LDAP_BASE : LDAP_USER_SUBTREE,

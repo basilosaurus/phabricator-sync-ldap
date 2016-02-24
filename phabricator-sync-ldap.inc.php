@@ -24,7 +24,7 @@ register_shutdown_function("send_report");
 
 // LDAP
 
-function create_ldap_connection($uri, $binddn, $bindpw) {
+function create_ldap_connection($uri, $binddn = "", $bindpw = "") {
 	$connection = ldap_connect($uri);
 	assert($connection !== null);
 
@@ -32,8 +32,11 @@ function create_ldap_connection($uri, $binddn, $bindpw) {
 	assert($success !== false);
 	$success = ldap_set_option($connection, LDAP_OPT_REFERRALS, 0);
 	assert($success !== false);
-
-	$success = ldap_bind($connection, $binddn, $bindpw);
+  if ( !ANON_BIND ) {
+    $success = ldap_bind($connection, $binddn, $bindpw);
+  } else {
+    $success = ldap_bind($connection);
+  }
 	assert($success !== false);
 
 	return $connection;
