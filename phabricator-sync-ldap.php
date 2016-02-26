@@ -46,11 +46,11 @@ assert($PHAB_PROTECTED_USERS !== null);
 $ldap_uri = getenv('LDAP_URI');
 assert($ldap_uri !== false);
 $ldap_binddn = getenv('LDAP_BINDDN');
+$ldap_bindpw = getenv('LDAP_BINDPW');
 if ( !ANON_BIND ) {
   assert($ldap_binddn !== false);
+  assert($ldap_bindpw !== false);
 }
-$ldap_bindpw = getenv('LDAP_BINDPW');
-assert($ldap_bindpw !== false);
 
 if (DRY_RUN) {
 	debug(">>> DRY RUN <<<\n");
