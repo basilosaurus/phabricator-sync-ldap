@@ -47,10 +47,7 @@ $ldap_uri = getenv('LDAP_URI');
 assert($ldap_uri !== false);
 $ldap_binddn = getenv('LDAP_BINDDN');
 $ldap_bindpw = getenv('LDAP_BINDPW');
-if ( !ANON_BIND ) {
-  assert($ldap_binddn !== false);
-  assert($ldap_bindpw !== false);
-}
+assert(($ldap_binddn === false && $ldap_bindpw !== false) || ($ldap_binddn !== false && $ldap_bindpw !== false));
 
 if (DRY_RUN) {
 	debug(">>> DRY RUN <<<\n");
@@ -58,12 +55,10 @@ if (DRY_RUN) {
 
 // LDAP
 
-$conn = NULL;
-
-if ( !ANON_BIND ) {
-  $conn = create_ldap_connection($ldap_uri, $ldap_binddn, $ldap_bindpw);
-} else {
-  $conn = create_ldap_connection($ldap_uri);
+if ($ldap_binddn === false && $ldap_bindpw === false) {
+	debug("Attempting anonymous bind ...\n");
+	$ldap_binddn = NULL;
+	$ldap_bindpw = NULL;
 }
 
 $ld = array(
